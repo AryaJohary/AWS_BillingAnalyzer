@@ -1,0 +1,113 @@
+Connect with AWS Billing API and get all the Invoices for the last 12 months.
+Problem Statement: 
+To simplify our AWS cost management, we'll automate the process of fetching and analyzing detailed billing information for the past year. This will help us identify cost-saving opportunities and optimize our cloud resources.
+
+Features:
+Technical Aspect:
+
+Authentication and Authorization:
+Use environment variables to access the Billing API. 
+
+API Calls: 
+Make API calls to the Billing API's operation to fetch detailed billing information for the past 12 months.
+
+Projects API: Get a list of projects and their associated billing accounts.
+
+Reports API: Retrieve billing reports for the specified period.
+
+Billing Accounts API: Get information about billing accounts and their associated projects.
+
+Data Extraction and Parsing:
+Project ID
+
+Service usage details
+
+Product codes
+
+Line item descriptions
+
+Costs
+
+Usage quantities
+
+Periods
+
+Payment methods
+
+AWS Billing API Integration:
+Make API calls to the Billing API's operation to fetch detailed billing information for the past 12 months.
+
+Data Processing:
+Parse the API response to extract relevant information.
+
+Data Storage:
+Store the retrieved data in a suitable format (database) for further analysis.
+
+Report Generation:
+Generate comprehensive reports in PDF format.
+
+
+
+User Interface
+
+User Interface:
+Dashboard: Display key metrics like total monthly cost, cost breakdown by service, and cost trends over time.
+
+Detailed Reports: Provide detailed reports in PDF format, including line item breakdowns, cost comparisons, and recommendations.
+
+Data Visualization:
+Time-Series Charts:
+
+Monthly Cost Trend: Plot the total monthly cost over time to identify seasonal variations and cost spikes.
+
+Daily Cost Trend: Analyze daily cost fluctuations to identify potential anomalies or inefficient resource usage.
+
+Bar Charts:
+
+Cost Breakdown by Service: Visualize the distribution of costs across different services.
+
+Cost Comparison: Compare costs across different periods.
+
+Pie Charts:
+
+Cost Distribution by Service: Show the percentage of total cost attributed to each service.
+
+User Interaction:
+Allow users to: 
+
+Allow users to filter and sort data 
+
+Time-Based Filtering:
+
+Allow users to filter data by specific date ranges (e.g., daily, weekly, monthly, yearly).
+
+Enable filtering data by specific periods (e.g., last 7 days, last 30 days, last year).
+
+Cost-Based Filtering:
+
+Allow users to filter data by cost thresholds (e.g., costs above a certain amount).
+
+Zoom in on specific periods
+
+Date Range Picker
+
+Enable users to export/import reports in PDF format
+
+Export Reports: Generate PDF files containing report data.
+
+Import Reports: Load PDF files into the system for further analysis or storage.
+
+Common Considerations:
+Data Privacy: Handle sensitive billing information securely and comply with relevant data privacy regulations.
+
+Error Handling: Implement robust mechanisms to handle potential API errors and exceptions.
+
+Retry Mechanism: Maximum Retries
+
+Rate Limiting and Throttling: Respect API Rate Limits
+
+Error Logging and Monitoring: Log Error Details & Alerting
+
+Circuit Breaker Pattern: Timeout Mechanism.
+
+Security: Store API tokens securely and avoid hardcoding them in scripts.
