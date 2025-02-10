@@ -100,8 +100,8 @@ defmodule BillingsArya2Web.PageLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto p-4">
-      <!-- Dashboard Header -->
-      <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+      <!-- AWS Cost Analysis Header (Bigger relative to subsequent items) -->
+      <h1 class="text-4xl font-bold mb-8">AWS Cost Analysis</h1>
 
       <!-- Metrics Overview -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

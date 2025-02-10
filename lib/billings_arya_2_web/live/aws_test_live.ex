@@ -174,8 +174,8 @@ defmodule BillingsArya2Web.AWSTestLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto p-4">
-      <!-- Dashboard Header -->
-      <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+      <!-- AWS Cost Analysis Header (Bigger relative to subsequent items) -->
+      <h1 class="text-4xl font-bold mb-8">AWS Cost Analysis</h1>
 
       <!-- Metrics Overview -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -203,7 +203,7 @@ defmodule BillingsArya2Web.AWSTestLive do
       <!-- Filters Section (Cost Threshold Removed) -->
       <div class="mb-8 bg-gray-100 p-4 rounded">
         <h2 class="text-xl font-semibold mb-2">Filters</h2>
-        <.form :let={f} for={@filters} phx-submit="update_filters">
+        <.form :let={_f} for={@filters} phx-submit="update_filters">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label for="date_from" class="block">From:</label>
@@ -211,7 +211,7 @@ defmodule BillingsArya2Web.AWSTestLive do
                 type="date"
                 id="date_from"
                 name="filters[date_from]"
-                value={@filters["date_from"]}
+                value={@filters["date_from"] || ""}
                 class="mt-1 block w-full"
               />
             </div>
@@ -221,7 +221,7 @@ defmodule BillingsArya2Web.AWSTestLive do
                 type="date"
                 id="date_to"
                 name="filters[date_to]"
-                value={@filters["date_to"]}
+                value={@filters["date_to"] || ""}
                 class="mt-1 block w-full"
               />
             </div>
@@ -237,9 +237,9 @@ defmodule BillingsArya2Web.AWSTestLive do
       <!-- Billing Records (Filtered) - Placed Immediately Below Filters -->
       <div class="mb-8">
         <h2 class="text-xl font-semibold mb-2">Detailed Billing Records</h2>
-        <div class="bg-white shadow p-4 rounded max-h-96 overflow-y-auto">
+        <div class="bg-white shadow rounded max-h-96 overflow-y-auto">
           <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50 sticky top-0 z-10">
               <tr>
                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project ID</th>
                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Usage Details</th>

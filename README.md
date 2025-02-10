@@ -1,84 +1,93 @@
 # AWS Billing Analysis Tool
 
-## Overview
+## Project Overview
 
-This application automates AWS cost management by fetching, analyzing, and visualizing billing information for the past 12 months. The tool provides comprehensive insights into cloud resource expenditure, helping organizations optimize their AWS spending.
+This advanced Elixir Phoenix application provides a comprehensive AWS billing analytics platform, leveraging real-time data processing, interactive visualizations, and dynamic filtering capabilities. Designed to transform complex AWS billing data into actionable insights, the tool demonstrates sophisticated cloud cost management techniques.
 
-## Prerequisites
+## Technical Architecture
 
-### System Requirements
+### Key Technologies
+- Elixir Programming Language
+- Phoenix LiveView
+- AWS Cost and Usage Report (CUR) Integration
+- Data Visualization Techniques
+- Responsive Web Design with Tailwind CSS
+
+### Core Features
+
+#### Dynamic Data Processing
+- Real-time parsing of AWS Cost and Usage Reports
+- Sophisticated data aggregation algorithms
+- Flexible date-range filtering
+- Comprehensive cost analysis computations
+
+#### Advanced Visualization Capabilities
+- Interactive time-series charts
+  - Monthly cost trend visualization
+  - Daily cost fluctuation analysis
+- Detailed bar charts representing:
+  - Cost breakdown by service
+  - Comparative cost analysis
+- Pie chart for service cost distribution
+
+#### Data Transformation Techniques
+- Robust error handling
+- Intelligent data parsing
+- Flexible date comparison methods
+- Comprehensive billing record display
+
+### Endpoint Capabilities
+
+#### `/awstest` Endpoint
+Demonstrates precise AWS Cost and Usage Report retrieval with:
+- Data extraction from AWS billing APIs
+- Comprehensive parsing and aggregation
+- Visualization of available billing insights
+- Proof of concept for cloud billing data integration
+
+#### `/index` Endpoint
+Provides enhanced data visualization through:
+- Randomly generated sample data
+- Comprehensive cost scenario simulation
+- Detailed analytical representations
+- Consistent visualization regardless of data source limitations
+
+### Technical Highlights
+
+- Modular LiveView architecture
+- Advanced filtering mechanisms
+- Dynamic chart rendering
+- Secure environment variable management
+- Comprehensive error logging
+
+## Screenshots
+
+![AWS CUR Data Overview](screenshots/awstestpage.jpeg)
+*A comprehensive overview of AWS Cost & Usage Report (CUR) data showcasing key billing insights and trends.*
+
+![Simulated AWS Billing Visualization](screenshots/indexpage.jpeg)
+*Visualization generated from sample data, mirroring a production AWS paid account's billing analysis and filtering capabilities.*
+
+## Security Considerations
+
+- Secure management of AWS credentials via environment variables
+- Robust error handling and logging
+- Implemented with best practices for handling sensitive financial data
+
+## Performance Optimization
+
+- Efficient data processing using Elixir's functional programming paradigms
+- Minimal memory overhead
+- Fast rendering of complex billing datasets
+
+## Technical Requirements
+
+### Prerequisites
 - Elixir
 - Phoenix Framework
 - AWS Account with Billing API access
 
-### Environment Variables
-
-Before running the application, configure the following environment variables:
-
-- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
-- `AWS_ACCESS_KEY_ID`: Your AWS access key ID
-- `AWS_DEFAULT_REGION`: Your default AWS region (e.g., us-east-1)
-
-**Note**: Ensure these credentials have appropriate permissions to access AWS Billing APIs.
-
-## Installation
-
-1. Clone the repository
-```bash
-git clone [repository-url]
-cd [project-directory]
-```
-
-2. Install dependencies
-```bash
-mix setup
-```
-
-3. Set environment variables
-   - On Unix/Linux: `export AWS_ACCESS_KEY_ID=your_key`
-   - On Windows: `set AWS_ACCESS_KEY_ID=your_key`
-
-## Running the Application
-
-Start the Phoenix server:
-```bash
-mix phx.server
-```
-
-The application will be available at `http://localhost:4000`
-
-## Features
-
-- Automated AWS billing data retrieval
-- Comprehensive cost analysis
-- Interactive dashboard
-- Detailed PDF report generation
-- Flexible data filtering and visualization
-
-## Screenshots
-
-![Dashboard Overview](screenshots/dashboard.png)
-*Main Dashboard Showing Cost Trends*
-
-![Detailed Report](screenshots/detailed-report.png)
-*Detailed Billing Report Visualization*
-
-## Security Considerations
-
-- API credentials are managed through environment variables
-- Sensitive billing information is handled securely
-- Implements error handling and circuit breaker patterns
-
-## Troubleshooting
-
-- Verify AWS credentials have correct permissions
-- Check network connectivity
-- Review error logs for detailed diagnostics
-
-## Contributing
-
-Please read `CONTRIBUTING.md` for details on our code of conduct and the process for submitting pull requests.
-
-## License
-
-This project is licensed under the [Your License] - see the `LICENSE.md` file for details.
+### Required Environment Variables
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_DEFAULT_REGION`
