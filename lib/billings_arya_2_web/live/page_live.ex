@@ -16,12 +16,13 @@ defmodule BillingsArya2Web.PageLive do
         %{month: month, cost: (:rand.uniform() * 5000 |> Float.round(2))}
       end
 
-    # Simulate a small daily cost trend.
-    daily_cost_trend = [
-      %{date: "2023-08-26", cost: 200.0},
-      %{date: "2023-08-27", cost: 210.0},
-      %{date: "2023-08-28", cost: 205.0}
-    ]
+    # Generate a daily cost trend of at least 5 entries.
+    daily_cost_trend =
+      for i <- 0..4 do
+        date = Date.utc_today() |> Date.add(-i) |> Date.to_string()
+        cost = (:rand.uniform() * 50 + 150) |> Float.round(2)
+        %{date: date, cost: cost}
+      end
 
     # Use the latest month's cost as the total monthly cost.
     total_monthly_cost = List.last(monthly_cost_trend).cost

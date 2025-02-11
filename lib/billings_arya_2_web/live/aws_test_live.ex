@@ -45,11 +45,26 @@ defmodule BillingsArya2Web.AWSTestLive do
 
   @impl true
   def handle_event("update_filters", %{"filters" => filters_params}, socket) do
-    # Use the new filters to re-filter the original billing records.
+    # Apply the new filters to the original billing records.
     filtered_line_items = apply_filters(socket.assigns.line_items, filters_params)
+
     socket =
       socket
       |> assign(:filters, filters_params)
+      |> assign(:filtered_line_items, filtered_line_items)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("clear_filters", _params, socket) do
+    # Reset filters to the default state.
+    default_filters = %{"date_from" => "", "date_to" => ""}
+    filtered_line_items = apply_filters(socket.assigns.line_items, default_filters)
+
+    socket =
+      socket
+      |> assign(:filters, default_filters)
       |> assign(:filtered_line_items, filtered_line_items)
 
     {:noreply, socket}
@@ -131,20 +146,20 @@ defmodule BillingsArya2Web.AWSTestLive do
     end
   end
 
-  # Apply only date-based filters (cost threshold removed).
+  # Apply only date-based filters.
   defp apply_filters(line_items, filters) do
     Enum.filter(line_items, fn item ->
       date_ok? =
         (case filters["date_from"] do
-          "" -> true
-          nil -> true
-          from_date -> compare_date(item["Period Start"], from_date, :gte)
-        end) and
+           "" -> true
+           nil -> true
+           from_date -> compare_date(item["Period Start"], from_date, :gte)
+         end) and
         (case filters["date_to"] do
-          "" -> true
-          nil -> true
-          to_date -> compare_date(item["Period Start"], to_date, :lte)
-        end)
+           "" -> true
+           nil -> true
+           to_date -> compare_date(item["Period End"], to_date, :lte)
+         end)
 
       date_ok?
     end)
@@ -226,9 +241,12 @@ defmodule BillingsArya2Web.AWSTestLive do
               />
             </div>
           </div>
-          <div class="mt-4">
+          <div class="mt-4 flex space-x-2">
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
               Apply Filters
+            </button>
+            <button type="button" phx-click="clear_filters" class="bg-gray-500 text-white px-4 py-2 rounded">
+              Clear Filters
             </button>
           </div>
         </.form>

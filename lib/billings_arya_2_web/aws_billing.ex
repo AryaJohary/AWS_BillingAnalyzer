@@ -200,44 +200,61 @@ defmodule BillingsArya2Web.AWSBilling do
         "Line-item Description" => Map.get(item, "lineItem/LineItemDescription", "N/A"),
         "Cost"                  => Map.get(item, "lineItem/UnblendedCost", "0"),
         "Usage Quantity"        => Map.get(item, "lineItem/UsageAmount", "0"),
-        "Period Start"          => Map.get(item, "bill/BillingPeriodStartDate", "N/A"),
-        "Period End"            => Map.get(item, "bill/BillingPeriodEndDate", "N/A"),
+        "Period Start"          => format_date(Map.get(item, "bill/BillingPeriodStartDate", "N/A")),
+        "Period End"            => format_date(Map.get(item, "bill/BillingPeriodEndDate", "N/A")),
         "Payment Method"        => Map.get(item, "bill/BillType", "N/A")
       }
     end)
   end
 
-    # Aggregates cost data from the transformed line items.
-    defp aggregate_cur_data(line_items) do
-      total_cost =
-        line_items
-        |> Enum.reduce(0.0, fn item, acc ->
-          cost = case Float.parse(item["Cost"]) do
+  # Helper function to format the date string to "DD-MM-YYYY".
+  defp format_date(date) when is_binary(date) do
+    if String.length(date) >= 10 do
+      date_to_format = String.slice(date, 0, 10)
+      case Date.from_iso8601(date_to_format) do
+        {:ok, parsed_date} ->
+          Calendar.strftime(parsed_date, "%d-%m-%Y")
+        _ ->
+          date_to_format
+      end
+    else
+      date
+    end
+  end
+
+  # Aggregates cost data from the transformed line items.
+  defp aggregate_cur_data(line_items) do
+    total_cost =
+      line_items
+      |> Enum.reduce(0.0, fn item, acc ->
+        cost =
+          case Float.parse(item["Cost"]) do
             {num, _} -> num
             :error   -> 0.0
           end
-          acc + cost
-        end)
+        acc + cost
+      end)
 
-      project_totals =
-        line_items
-        |> Enum.group_by(fn item -> item["Project ID"] || "Unknown" end)
-        |> Enum.map(fn {project, items} ->
-          project_total =
-            Enum.reduce(items, 0.0, fn item, acc ->
-              cost = case Float.parse(item["Cost"]) do
+    project_totals =
+      line_items
+      |> Enum.group_by(fn item -> item["Project ID"] || "Unknown" end)
+      |> Enum.map(fn {project, items} ->
+        project_total =
+          Enum.reduce(items, 0.0, fn item, acc ->
+            cost =
+              case Float.parse(item["Cost"]) do
                 {num, _} -> num
                 :error   -> 0.0
               end
-              acc + cost
-            end)
-          {project, project_total}
-        end)
-        |> Enum.into(%{})
+            acc + cost
+          end)
+        {project, project_total}
+      end)
+      |> Enum.into(%{})
 
-      %{
-        total_cost: total_cost,
-        project_totals: project_totals
-      }
-    end
+    %{
+      total_cost: total_cost,
+      project_totals: project_totals
+    }
+  end
 end
