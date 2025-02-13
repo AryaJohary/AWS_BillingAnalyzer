@@ -42,7 +42,7 @@ defmodule BillingsArya2Web.PageLive do
       data: Enum.map(Enum.take(monthly_cost_trend, 3), & &1.cost)
     }
 
-    # Simulate detailed billing records (as would come from AWS billing API).
+    # Simulate detailed billing records (as would come from AWS billing API) with Period Start and Period End.
     billing_records = [
       %{
         project_id: "Project-001",
@@ -51,7 +51,8 @@ defmodule BillingsArya2Web.PageLive do
         line_item_description: "On-demand compute hours",
         cost: 123.45,
         usage_quantity: 100,
-        period: "Aug 2023",
+        period_start: "2025-02-13",
+        period_end: "2025-02-13",
         payment_method: "Credit Card"
       },
       %{
@@ -61,14 +62,48 @@ defmodule BillingsArya2Web.PageLive do
         line_item_description: "Standard storage cost",
         cost: 67.89,
         usage_quantity: 250,
-        period: "Aug 2023",
+        period_start: "2025-02-13",
+        period_end: "2025-02-13",
         payment_method: "Invoice"
+      },
+      %{
+        project_id: "Project-003",
+        service_usage_details: "RDS Database",
+        product_code: "RDS-STD",
+        line_item_description: "Managed relational database service",
+        cost: 210.00,
+        usage_quantity: 50,
+        period_start: "2025-02-13",
+        period_end: "2025-02-13",
+        payment_method: "Credit Card"
+      },
+      %{
+        project_id: "Project-004",
+        service_usage_details: "Lambda Functions",
+        product_code: "LAMBDA-STD",
+        line_item_description: "Compute usage for Lambda functions",
+        cost: 89.99,
+        usage_quantity: 300,
+        period_start: "2025-02-13",
+        period_end: "2025-02-13",
+        payment_method: "Invoice"
+      },
+      %{
+        project_id: "Project-005",
+        service_usage_details: "CloudFront CDN",
+        product_code: "CF-STD",
+        line_item_description: "Content delivery network charges",
+        cost: 150.75,
+        usage_quantity: 80,
+        period_start: "2025-02-13",
+        period_end: "2025-02-13",
+        payment_method: "Credit Card"
       }
-      # Add additional records as needed...
     ]
 
-    # Removed "cost_threshold" from default filters.
+    # Default filters.
     filters = %{"date_from" => nil, "date_to" => nil}
+    filtered_billing_records = apply_filters(billing_records, filters)
 
     socket =
       socket
@@ -78,6 +113,7 @@ defmodule BillingsArya2Web.PageLive do
       |> assign(:daily_cost_trend, daily_cost_trend)
       |> assign(:cost_comparison, cost_comparison)
       |> assign(:billing_records, billing_records)
+      |> assign(:filtered_billing_records, filtered_billing_records)
       |> assign(:filters, filters)
       |> assign(:months, months)
 
@@ -86,8 +122,13 @@ defmodule BillingsArya2Web.PageLive do
 
   @impl true
   def handle_event("update_filters", %{"filters" => filters_params}, socket) do
-    # In a real app, you would apply these filters to your data query.
-    socket = assign(socket, :filters, filters_params)
+    # Apply date-based filters to the original billing records.
+    filtered_billing_records = apply_filters(socket.assigns.billing_records, filters_params)
+    socket =
+      socket
+      |> assign(:filters, filters_params)
+      |> assign(:filtered_billing_records, filtered_billing_records)
+
     {:noreply, socket}
   end
 
@@ -158,10 +199,46 @@ defmodule BillingsArya2Web.PageLive do
         </.form>
       </div>
 
+      <!-- Detailed Billing Records (rendered as a table) -->
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Detailed Billing Records</h2>
+        <div class="bg-white shadow rounded max-h-96 overflow-y-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project ID</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Usage Details</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Code</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line-item Description</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage Quantity</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period Start</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period End</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <%= for record <- @filtered_billing_records do %>
+                <tr>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.project_id %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.service_usage_details %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.product_code %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.line_item_description %></td>
+                  <td class="px-4 py-2 whitespace-nowrap">$<%= record.cost %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.usage_quantity %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.period_start %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.period_end %></td>
+                  <td class="px-4 py-2 whitespace-nowrap"><%= record.payment_method %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Data Visualization -->
       <div class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Data Visualization</h2>
-
         <!-- Time-Series Charts -->
         <div class="mb-8">
           <h3 class="text-lg font-semibold mb-2">Time-Series Charts</h3>
@@ -249,5 +326,42 @@ defmodule BillingsArya2Web.PageLive do
       </div>
     </div>
     """
+  end
+
+  # Date filtering logic copied from aws_test_live.ex and adapted to use our record keys.
+  defp apply_filters(records, filters) do
+    Enum.filter(records, fn record ->
+      date_ok? =
+        (case filters["date_from"] do
+           "" -> true
+           nil -> true
+           from_date -> compare_date(record.period_start, from_date, :gte)
+         end) and
+        (case filters["date_to"] do
+           "" -> true
+           nil -> true
+           to_date -> compare_date(record.period_end, to_date, :lte)
+         end)
+
+      date_ok?
+    end)
+  end
+
+  defp compare_date(date_str, ref_date_str, :gte) do
+    case {Date.from_iso8601(date_str), Date.from_iso8601(ref_date_str)} do
+      {{:ok, date}, {:ok, ref_date}} ->
+        Date.compare(date, ref_date) in [:gt, :eq]
+      _ ->
+        true
+    end
+  end
+
+  defp compare_date(date_str, ref_date_str, :lte) do
+    case {Date.from_iso8601(date_str), Date.from_iso8601(ref_date_str)} do
+      {{:ok, date}, {:ok, ref_date}} ->
+        Date.compare(date, ref_date) in [:lt, :eq]
+      _ ->
+        true
+    end
   end
 end

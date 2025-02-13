@@ -16,7 +16,7 @@ defmodule BillingsArya2Web.AWSBilling do
 
   We need the following fields:
     • Project ID            -> from "bill/PayerAccountId"
-    • Service Usage Details -> from "lineItem/UsageAccountId"
+    • Service Usage Details -> from "product/ProductName"
     • Product Code          -> from "lineItem/ProductCode"
     • Line-item Description -> from "lineItem/LineItemDescription"
     • Cost                  -> from "lineItem/UnblendedCost"
@@ -137,19 +137,6 @@ defmodule BillingsArya2Web.AWSBilling do
     end
   end
 
-  # # Default header mapping if CSV does not have valid header names.
-  # @default_headers [
-  #   "bill/PayerAccountId",
-  #   "lineItem/UnblendedCost",
-  #   "lineItem/UsageAmount",
-  #   "lineItem/UsageAccountId",
-  #   "lineItem/ProductCode",
-  #   "lineItem/LineItemDescription",
-  #   "lineItem/UsageStartDate",
-  #   "lineItem/UsageEndDate",
-  #   "bill/BillType"
-  # ]
-
   # Parses CSV content into a list of maps.
   # This version splits the content into lines using newline delimiters and uses the first line as headers.
   defp parse_cur_csv(csv_content) when is_binary(csv_content) do
@@ -195,7 +182,7 @@ defmodule BillingsArya2Web.AWSBilling do
     Enum.map(data, fn item ->
       %{
         "Project ID"            => Map.get(item, "bill/PayerAccountId", "Unknown"),
-        "Service Usage Details" => Map.get(item, "lineItem/UsageAccountId", "N/A"),
+        "Service Usage Details" => Map.get(item, "product/ProductName", "N/A"),
         "Product Code"          => Map.get(item, "lineItem/ProductCode", "N/A"),
         "Line-item Description" => Map.get(item, "lineItem/LineItemDescription", "N/A"),
         "Cost"                  => Map.get(item, "lineItem/UnblendedCost", "0"),

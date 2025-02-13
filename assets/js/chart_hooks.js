@@ -2,12 +2,21 @@ import Chart from "chart.js/auto";
 
 export const MonthlyCostChart = {
   mounted() {
-    const chartData = JSON.parse(this.el.dataset.chart);
+    this.renderChart();
+  },
+  updated() {
+    this.renderChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
     this.el.innerHTML = "";
     const canvas = document.createElement("canvas");
     this.el.appendChild(canvas);
     const ctx = canvas.getContext("2d");
-    new Chart(ctx, {
+    const chartData = JSON.parse(this.el.dataset.chart);
+    this.chart = new Chart(ctx, {
       type: "line",
       data: {
         labels: chartData.map(item => item.month),
@@ -30,12 +39,21 @@ export const MonthlyCostChart = {
 
 export const DailyCostChart = {
   mounted() {
-    const chartData = JSON.parse(this.el.dataset.chart);
+    this.renderChart();
+  },
+  updated() {
+    this.renderChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
     this.el.innerHTML = "";
     const canvas = document.createElement("canvas");
     this.el.appendChild(canvas);
     const ctx = canvas.getContext("2d");
-    new Chart(ctx, {
+    const chartData = JSON.parse(this.el.dataset.chart);
+    this.chart = new Chart(ctx, {
       type: "line",
       data: {
         labels: chartData.map(item => item.date),
@@ -58,12 +76,21 @@ export const DailyCostChart = {
 
 export const BarChartBreakdown = {
   mounted() {
-    const data = JSON.parse(this.el.dataset.chart);
+    this.renderChart();
+  },
+  updated() {
+    this.renderChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
     this.el.innerHTML = "";
     const canvas = document.createElement("canvas");
     this.el.appendChild(canvas);
     const ctx = canvas.getContext("2d");
-    new Chart(ctx, {
+    const data = JSON.parse(this.el.dataset.chart);
+    this.chart = new Chart(ctx, {
       type: "bar",
       data: {
         labels: Object.keys(data),
@@ -101,43 +128,61 @@ export const BarChartBreakdown = {
 };
 
 export const BarChartComparison = {
-    mounted() {
-      const chartData = JSON.parse(this.el.dataset.chart);
-      this.el.innerHTML = "";
-      const canvas = document.createElement("canvas");
-      this.el.appendChild(canvas);
-      const ctx = canvas.getContext("2d");
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: chartData.labels,
-          datasets: [{
-            label: "Cost Comparison",
-            data: chartData.data,
-            backgroundColor: "rgba(255, 159, 64, 0.2)",
-            borderColor: "rgba(255, 159, 64, 1)",
-            borderWidth: 1,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
-    }
-  }; 
-
-export const PieChartService = {
   mounted() {
-    const data = JSON.parse(this.el.dataset.chart);
+    this.renderChart();
+  },
+  updated() {
+    this.renderChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
     this.el.innerHTML = "";
     const canvas = document.createElement("canvas");
     this.el.appendChild(canvas);
     const ctx = canvas.getContext("2d");
-    new Chart(ctx, {
+    const chartData = JSON.parse(this.el.dataset.chart);
+    this.chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: "Cost Comparison",
+          data: chartData.data,
+          backgroundColor: "rgba(255, 159, 64, 0.2)",
+          borderColor: "rgba(255, 159, 64, 1)",
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+};
+
+export const PieChartService = {
+  mounted() {
+    this.renderChart();
+  },
+  updated() {
+    this.renderChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.el.innerHTML = "";
+    const canvas = document.createElement("canvas");
+    this.el.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    const data = JSON.parse(this.el.dataset.chart);
+    this.chart = new Chart(ctx, {
       type: "pie",
       data: {
         labels: Object.keys(data),
