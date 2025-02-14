@@ -10,7 +10,7 @@ defmodule BillingsArya2Web.AWSTestLive do
         line_items = report_data.line_items
         aggregate = report_data.aggregate
 
-        # Generate charts using the full (unfiltered) report data.
+        # Generating charts using the full (unfiltered) report data.
         monthly_cost_trend = generate_monthly_cost_trend(line_items)
         daily_cost_trend   = generate_daily_cost_trend(line_items)
         cost_breakdown     = generate_cost_breakdown(line_items)

@@ -1,60 +1,34 @@
 defmodule BillingsArya2Web.AWSBilling do
-  @moduledoc """
-  A module to query the AWS Cost and Usage Report (CUR) using the aws-elixir package.
-
-  The report is assumed to be available as a CSV (gzipped) file in an S3 bucket.
-  This module extracts nine specific fields from a CSV whose headers are as shown below:
-
-    identity/LineItemId,identity/TimeInterval,bill/InvoiceId,bill/BillingEntity,
-    bill/BillType,bill/PayerAccountId,bill/BillingPeriodStartDate,bill/BillingPeriodEndDate,
-    lineItem/UsageAccountId,lineItem/UsageAccountType,lineItem/UsageStartDate,
-    lineItem/UsageEndDate,lineItem/ProductCode,lineItem/UsageType,lineItem/Operation,
-    lineItem/AvailabilityZone,lineItem/ResourceId,lineItem/UsageAmount,
-    lineItem/NormalizationFactor,lineItem/NormalizedUsageAmount,lineItem/CurrencyCode,
-    lineItem/UnblendedRate,lineItem/UnblendedCost,lineItem/BlendedRate,lineItem/BlendedCost,
-    lineItem/LineItemDescription,lineItem/TaxType,lineItem/LegalEntity,product/ProductName,... etc.
-
-  We need the following fields:
-    • Project ID            -> from "bill/PayerAccountId"
-    • Service Usage Details -> from "product/ProductName"
-    • Product Code          -> from "lineItem/ProductCode"
-    • Line-item Description -> from "lineItem/LineItemDescription"
-    • Cost                  -> from "lineItem/UnblendedCost"
-    • Usage Quantity        -> from "lineItem/UsageAmount"
-    • Period Start          -> from "bill/BillingPeriodStartDate"
-    • Period End            -> from "bill/BillingPeriodEndDate"
-    • Payment Method        -> from "bill/BillType"
-  """
+  # We need the following fields:
+  #   • Project ID            -> from "bill/PayerAccountId"
+  #   • Service Usage Details -> from "product/ProductName"
+  #   • Product Code          -> from "lineItem/ProductCode"
+  #   • Line-item Description -> from "lineItem/LineItemDescription"
+  #   • Cost                  -> from "lineItem/UnblendedCost"
+  #   • Usage Quantity        -> from "lineItem/UsageAmount"
+  #   • Period Start          -> from "bill/BillingPeriodStartDate"
+  #   • Period End            -> from "bill/BillingPeriodEndDate"
+  #   • Payment Method        -> from "bill/BillType"
   require Logger
 
   #alias AWS.S3
 
-  # Define a CSV parser for CUR using NimbleCSV.
+  # Defining a CSV parser for CUR using NimbleCSV.
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
   @spec get_cur_report() :: {:ok, map()} | {:error, any()}
   def get_cur_report do
-    # For CUR API calls, use "us-east-1" since that's the endpoint for CUR.
+    # For CUR API calls, using "us-east-1" since that's the endpoint for CUR.
     client_cur = AWS.Client.create("us-east-1")
-    # For S3 calls, use the region that your bucket is in.
+    # For S3 calls, using our bucket region.
     client_s3 = AWS.Client.create("us-east-1")
 
     case AWS.CostandUsageReport.describe_report_definitions(client_cur, %{}) do
       {:ok, %{"ReportDefinitions" => [report_def | _]}, _meta} ->
         bucket = report_def["S3Bucket"]
-        prefix = report_def["S3Prefix"] || ""
 
-        # Based on your CLI output, if the report definition returns "aryaS3",
-        # override it to "aryaS3/AryaCostReport/" which is where your CSV files reside.
-        adjusted_prefix =
-          case prefix do
-            "aryaS3" -> "aryaS3/AryaCostReport/"
-            _ -> prefix
-          end
-
-        # List objects using the adjusted prefix.
+        # Listing objects
         with {:ok, list_response, _meta} <- AWS.S3.list_objects(client_s3, bucket) do
-          #Logger.info("Listing keys with prefix #{adjusted_prefix}: #{inspect(list_response)}")
           latest_key = extract_csv_key(list_response)
 
           if latest_key do
@@ -68,7 +42,7 @@ defmodule BillingsArya2Web.AWSBilling do
                 error
             end
           else
-            {:error, "No CSV file found in bucket #{bucket} with prefix #{adjusted_prefix}"}
+            {:error, "No CSV file found in bucket #{bucket}."}
           end
         else
           error ->
@@ -82,17 +56,17 @@ defmodule BillingsArya2Web.AWSBilling do
     end
   end
 
-  # Process the S3 object body: decompress if needed, parse the CSV,
-  # transform the parsed data into our desired schema, then aggregate cost data.
+  # Processing the S3 object body: decompression if needed then parse the CSV,
+  # then transform the parsed data into our desired schema, then aggregate cost data.
   defp process_body(body) do
     parsed_data = parse_cur_csv(body)
 
-    # Debug log: Log the headers from the first parsed row.
+    # Logging the headers from the first parsed row.
     if parsed_data != [] do
       #Logger.info("Parsed headers: #{inspect(Map.keys(hd(parsed_data)))}")
     end
 
-    # Log only the top 2 parsed CSV rows.
+    # Logging only the top 2 parsed CSV rows.
     #Logger.info("Top 2 parsed CSV rows: #{inspect(Enum.take(parsed_data, 2))}")
 
     transformed = transform_data(parsed_data)
@@ -149,7 +123,7 @@ defmodule BillingsArya2Web.AWSBilling do
 
     #Logger.debug("Raw CSV content: #{String.slice(csv_text, 0, 500)}")
 
-    # Split the CSV text by newline (handling both \n and \r\n)
+    # Spliting the CSV text by newline (handling both \n and \r\n)
     lines =
       csv_text
       |> String.split(~r/\r?\n/, trim: true)

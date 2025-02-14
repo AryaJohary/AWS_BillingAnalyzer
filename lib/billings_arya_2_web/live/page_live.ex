@@ -3,20 +3,20 @@ defmodule BillingsArya2Web.PageLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    # Simulate the last 12 months of AWS billing data.
+    # Simulating the last 12 months of AWS billing data.
     months = [
       "Sep 2022", "Oct 2022", "Nov 2022", "Dec 2022",
       "Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023",
       "May 2023", "Jun 2023", "Jul 2023", "Aug 2023"
     ]
 
-    # Create a monthly cost trend using generated values.
+    # monthly cost trend using generated values.
     monthly_cost_trend =
       for month <- months do
         %{month: month, cost: (:rand.uniform() * 5000 |> Float.round(2))}
       end
 
-    # Generate a daily cost trend of at least 5 entries.
+    # daily cost trend of 5 entries.
     daily_cost_trend =
       for i <- 0..4 do
         date = Date.utc_today() |> Date.add(-i) |> Date.to_string()
@@ -24,10 +24,10 @@ defmodule BillingsArya2Web.PageLive do
         %{date: date, cost: cost}
       end
 
-    # Use the latest month's cost as the total monthly cost.
+    # Using the latest month's cost as the total monthly cost.
     total_monthly_cost = List.last(monthly_cost_trend).cost
 
-    # Simulate cost breakdown by AWS services.
+    # cost breakdown by AWS services.
     cost_breakdown = %{
       "EC2"        => (:rand.uniform() * 2000 |> Float.round(2)),
       "S3"         => (:rand.uniform() * 1000 |> Float.round(2)),
@@ -36,13 +36,13 @@ defmodule BillingsArya2Web.PageLive do
       "CloudFront" => (:rand.uniform() * 800  |> Float.round(2))
     }
 
-    # Derive cost comparison data from the first three months.
+    # Deriving cost comparison data from the first three months.
     cost_comparison = %{
       labels: Enum.map(Enum.take(monthly_cost_trend, 3), & &1.month),
       data: Enum.map(Enum.take(monthly_cost_trend, 3), & &1.cost)
     }
 
-    # Simulate detailed billing records (as would come from AWS billing API) with Period Start and Period End.
+    # simulating detailed billing records (as would come from AWS billing API) with Period Start and Period End.
     billing_records = [
       %{
         project_id: "Project-001",
@@ -122,7 +122,7 @@ defmodule BillingsArya2Web.PageLive do
 
   @impl true
   def handle_event("update_filters", %{"filters" => filters_params}, socket) do
-    # Apply date-based filters to the original billing records.
+    # date-based filters to the original billing records.
     filtered_billing_records = apply_filters(socket.assigns.billing_records, filters_params)
     socket =
       socket
@@ -134,6 +134,7 @@ defmodule BillingsArya2Web.PageLive do
 
   @impl true
   def handle_event("download_report", _params, socket) do
+    # We will be handling it in client side hook in chart_hooks.js
     {:noreply, socket}
   end
 
@@ -141,7 +142,7 @@ defmodule BillingsArya2Web.PageLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto p-4">
-      <!-- AWS Cost Analysis Header (Bigger relative to subsequent items) -->
+    
       <h1 class="text-4xl font-bold mb-8">AWS Cost Analysis</h1>
 
       <!-- Metrics Overview -->
