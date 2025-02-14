@@ -134,7 +134,6 @@ defmodule BillingsArya2Web.PageLive do
 
   @impl true
   def handle_event("download_report", _params, socket) do
-    # Trigger your PDF report generation logic if needed.
     {:noreply, socket}
   end
 

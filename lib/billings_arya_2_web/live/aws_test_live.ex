@@ -235,6 +235,7 @@ defmodule BillingsArya2Web.AWSTestLive do
   defp display_number(val) when is_binary(val), do: if(String.trim(val) == "", do: "0", else: val)
   defp display_number(val), do: val
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="container mx-auto p-4">
@@ -243,7 +244,7 @@ defmodule BillingsArya2Web.AWSTestLive do
       <!-- Filters Section -->
       <div class="mb-8 bg-gray-100 p-4 rounded">
         <h2 class="text-xl font-semibold mb-2">Filters</h2>
-        <.form :let={f} for={@filters} phx-submit="update_filters">
+        <.form :let={_f} for={@filters} phx-submit="update_filters">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label for="date_from" class="block">From:</label>

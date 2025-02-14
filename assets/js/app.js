@@ -57,7 +57,6 @@ Hooks.DownloadPdf = {
   mounted() {
     this.el.addEventListener("click", (e) => {
       e.preventDefault();
-      // Optionally, you can perform any cleanup or UI adjustments here.
       window.print();
     });
   }
